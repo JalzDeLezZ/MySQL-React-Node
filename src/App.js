@@ -1,4 +1,5 @@
 import React, { Fragment , useEffect, useRef, useState} from 'react'
+import Modal from 'react-modal'
 
 const App = () => {
   
@@ -8,8 +9,13 @@ const App = () => {
   const [file, setFile] = useState(null)
   const [imageList, setImageList] = useState([]);
   const [listUpdate, setListUpdate] = useState(false);
-  
+  const [modal, setModal] = useState(false);
+  const [currentImage, setCurrentImage] = useState(null);
+
   useEffect(() => {
+
+    Modal.setAppElement('body')
+
     fetch('http://localhost:9000/images/get')
       .then(res => res.json())
       .then(res => setImageList(res))
@@ -44,6 +50,26 @@ const App = () => {
       
       setFile(null);
     }
+
+    const modalHanderl = (inOpen, image) => {
+      setModal(inOpen)
+      setCurrentImage(image)
+    }
+
+    const deleteHandler = () => {
+      let imageID = currentImage.split('-');
+      imageID = parseInt(imageID[0]);
+      fetch ('http://localhost:9000/images/delete/'+imageID, {
+          method: 'DELETE'
+        })
+        .then(res => res.text())
+        .then(res => {console.log(res)})
+        .catch(err => console.log(err))
+
+        setModal(false)
+        setListUpdate(true)
+    }
+
   return (<Fragment>
 
     <nav className='navbar navbar-dark bg-dark'>
@@ -84,12 +110,20 @@ const App = () => {
             style={{height: "200px", width: "300px"}}
           />
           <div className='card-body'>
-            <button className='btn btn-dark'>Click to view</button>
+            <button className='btn btn-dark' onClick={() => modalHanderl(true, pI) }>Click to view</button>
           </div>
         </div>
       ))}
     </div>
-
+      
+    <Modal style={{content: {right: "20%", left: "20%"}}} isOpen={modal} onRequestClose={()=> modalHanderl(false, null)}>
+      <div className='card'>
+        <img src={"http://localhost:9000/"+currentImage} alt='...' />
+        <div className='card-body'>
+          <button onClick={() => deleteHandler()} className='btn btn-danger'>DELETE</button>
+        </div>
+      </div>
+    </Modal>
   </Fragment>)
 }
 
