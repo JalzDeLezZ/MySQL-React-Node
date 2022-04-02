@@ -1,10 +1,24 @@
-import React, { Fragment , useRef, useState} from 'react'
+import React, { Fragment , useEffect, useRef, useState} from 'react'
 
 const App = () => {
+  
+  
   const fileinput = useRef()
+  
   const [file, setFile] = useState(null)
+  const [imageList, setImageList] = useState([]);
+  const [listUpdate, setListUpdate] = useState(false);
+  
+  useEffect(() => {
+    fetch('http://localhost:9000/images/get')
+      .then(res => res.json())
+      .then(res => setImageList(res))
+      .catch(err => console.log(err));
+      setListUpdate(false); 
+  }, [listUpdate])
 
-  const selectHandler = (e) => { const {files} = e.target;
+  const selectHandler = (e) => { 
+    const {files} = e.target;
     setFile(files[0])
   }
 
@@ -19,8 +33,11 @@ const App = () => {
     fetch('http://localhost:9000/images/post', {
       method: 'POST',
       body: formData
-    }).then(res => res.json())
-      .then(res => console.log(res))
+    }).then(res => res.text())
+      .then(res => {
+        console.log(res)
+        setListUpdate(true)
+      })
       .catch(err => console.log(err));
       
       fileinput.current.value = '';
@@ -55,6 +72,20 @@ const App = () => {
           </div>
         </div>
       </div>
+    </div>
+
+    <div className='container mt-3' style={{display: "flex", flexWrap: "wrap"}}>
+      {imageList.map(pI => (
+        <div className='card m-2' key={pI}>
+          <img 
+            src={"http://localhost:9000/"+pI} 
+            alt='...' 
+            className='card-img-top' 
+            style={{height: "200px", width: "300px"}}
+          />
+        </div>
+      ))}
+
     </div>
 
   </Fragment>)
