@@ -10,4 +10,5 @@ ReactDOM.render(
 );
  /* 
   npx create-react-app page
+  npm i react-modal
  */

@@ -83,9 +83,11 @@ const App = () => {
             className='card-img-top' 
             style={{height: "200px", width: "300px"}}
           />
+          <div className='card-body'>
+            <button className='btn btn-dark'>Click to view</button>
+          </div>
         </div>
       ))}
-
     </div>
 
   </Fragment>)
