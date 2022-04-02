@@ -44,7 +44,7 @@ router.get('/images/get' ,(req,res) => {
         conn.query('SELECT * FROM image', (err, rows) => {
             if(err) return res.status(500).send('server error')
             rows.map(pI => {
-                fs.writeFileSync(path.join(__dirname, '../dbimages/'+pI.id+'monkeywit.png'), pI.data)
+                fs.writeFileSync(path.join(__dirname, '../dbimages/'+pI.id+'-monkeywit.png'), pI.data)
             })
 
              const imgDir = fs.readdirSync(path.join(__dirname, '../dbimages'))
@@ -64,7 +64,7 @@ router.delete('/images/delete/:id' ,(req,res) => {
         conn.query('DELETE FROM image WHERE id = ?', [id] ,(err, rows) => {
             if(err) return res.status(500).send('server error')
 
-            fs.unlinkSync(path.join(__dirname, '../dbimages/'+id+'monkeywit.png'))
+            fs.unlinkSync(path.join(__dirname, '../dbimages/'+id+'-monkeywit.png'))
 
             res.send('image deleted!')
         })
